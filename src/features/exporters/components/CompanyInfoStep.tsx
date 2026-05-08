@@ -87,7 +87,7 @@ export default function CompanyInfoStep({ formData, errors, onChange }: CompanyI
           value={formData.phoneNumber}
           onChange={onChange}
           error={errors.phoneNumber}
-          defaultCountry={COUNTRY_TO_ISO[formData.country] ?? 'US'}
+          defaultCountry={COUNTRY_TO_ISO[formData.country as keyof typeof COUNTRY_TO_ISO] ?? 'US'}
           tooltip="Primary contact phone number for your business. Used for KYB verification and urgent account notifications."
           required
         />

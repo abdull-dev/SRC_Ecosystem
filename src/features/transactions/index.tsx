@@ -5,9 +5,10 @@ import { NETWORKS } from '../../shared/data/networksConfig'
 import TransactionTable from '../../shared/components/ui/TransactionTable'
 import SendPaymentModal from './components/SendPaymentModal'
 import NetworkSelect from '../../shared/components/ui/NetworkSelect'
+import FormInput from '../../shared/components/form/FormInput'
 import {
   TransactionsIcon, PaperAirplaneIcon,
-  ExclamationTriangleIcon, CheckCircleIcon, ShieldCheckIcon,
+  CheckCircleIcon, ShieldCheckIcon,
 } from '../../shared/components/icons'
 
 // ── Page ──────────────────────────────────────────────────────────────────────
@@ -18,28 +19,28 @@ export default function TransactionsPage() {
   const [tab, setTab] = useState('history')
 
   const [form, setForm]               = useState(EMPTY_FORM)
-  const [errors, setErrors]           = useState({})
+  const [errors, setErrors]           = useState<Record<string, string>>({})
   const [modalOpen, setModalOpen]     = useState(false)
-  const [paymentData, setPaymentData] = useState(null)
+  const [paymentData, setPaymentData] = useState<{ amount: string; address: string; network: string; fee: number } | null>(null)
 
   const selectedNetwork = NETWORKS.find(n => n.id === form.network)
   const amountNum    = parseFloat(form.amount)
   const validAmount  = !isNaN(amountNum) && amountNum > 0
   const validAddress = form.address.length >= 26
 
-  const setField = (field, value) => {
+  const setField = (field: string, value: string) => {
     setForm(prev => ({ ...prev, [field]: value }))
     if (errors[field]) setErrors(prev => { const n = { ...prev }; delete n[field]; return n })
   }
 
   const handleReview = () => {
-    const e = {}
+    const e: Record<string, string> = {}
     if (!form.amount || !validAmount) e.amount  = 'Please enter a valid amount greater than $0'
     if (!form.address)                e.address = 'Wallet address is required'
     else if (!validAddress)           e.address = 'Address must be at least 26 characters'
     if (!form.network)                e.network = 'Please select a network'
     if (Object.keys(e).length) { setErrors(e); return }
-    setPaymentData({ amount: form.amount, address: form.address, network: form.network, fee: selectedNetwork.fee })
+    setPaymentData({ amount: form.amount, address: form.address, network: form.network, fee: selectedNetwork?.fee ?? 0 })
     setModalOpen(true)
   }
 
@@ -69,7 +70,7 @@ export default function TransactionsPage() {
     <motion.div
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] }}
       className="space-y-6"
     >
       {/* ── Tab switcher ───────────────────────────────────────────────────── */}
@@ -140,65 +141,41 @@ export default function TransactionsPage() {
               </div>
 
               {/* Amount */}
-              <div>
-                <label className="block text-sm font-medium text-ink mb-1.5">
-                  Amount <span className="text-danger">*</span>
-                </label>
-                <div className={`flex items-center rounded-xl border overflow-hidden transition-all ${
-                  errors.amount
-                    ? 'border-danger'
-                    : 'border-line focus-within:border-brand focus-within:ring-2 focus-within:ring-brand/20'
-                }`}>
-                  <span className="px-4 py-3.5 text-xs font-semibold text-ink-muted bg-surface border-r border-line uppercase tracking-wide">USD</span>
-                  <span className="px-3 py-3.5 text-sm text-ink-muted bg-surface border-r border-line">$</span>
-                  <input
-                    type="number"
-                    min="0"
-                    step="0.01"
-                    placeholder="0.00"
-                    value={form.amount}
-                    onChange={e => setField('amount', e.target.value)}
-                    className="flex-1 px-4 py-3.5 text-sm bg-transparent text-ink outline-none placeholder:text-ink-faint tabular-nums"
-                  />
-                  {validAmount && (
-                    <span className="px-3">
-                      <CheckCircleIcon className="w-4 h-4 text-success-accent" />
-                    </span>
-                  )}
-                </div>
-                {errors.amount
-                  ? <p className="text-xs text-danger mt-1.5">{errors.amount}</p>
-                  : <p className="text-xs text-ink-faint mt-1.5">Enter the exact amount to send in US dollars</p>
+              <FormInput
+                label="Amount"
+                name="amount"
+                type="number"
+                value={form.amount}
+                onChange={setField}
+                error={errors.amount}
+                placeholder="0.00"
+                helper="Enter the exact amount to send in US dollars"
+                required
+                inputProps={{ min: 0, step: 0.01 }}
+                prefix={
+                  <>
+                    <span className="px-4 py-3.5 text-xs font-semibold text-ink-muted bg-surface border-r border-line uppercase tracking-wide">USD</span>
+                    <span className="px-3 py-3.5 text-sm text-ink-muted bg-surface border-r border-line">$</span>
+                  </>
                 }
-              </div>
+                suffix={validAmount ? (
+                  <span className="px-3">
+                    <CheckCircleIcon className="w-4 h-4 text-success-accent" />
+                  </span>
+                ) : undefined}
+              />
 
               {/* Recipient address */}
-              <div>
-                <label className="block text-sm font-medium text-ink mb-1.5">
-                  Recipient Wallet Address <span className="text-danger">*</span>
-                </label>
-                <div className={`flex items-center gap-3 rounded-xl border px-4 py-3.5 transition-all ${
-                  errors.address
-                    ? 'border-danger bg-danger-subtle/20'
-                    : 'border-line bg-surface focus-within:border-brand focus-within:ring-2 focus-within:ring-brand/20 focus-within:bg-card'
-                }`}>
-                  <input
-                    type="text"
-                    placeholder="0x... or blockchain wallet address"
-                    value={form.address}
-                    onChange={e => setField('address', e.target.value)}
-                    className="flex-1 text-sm bg-transparent text-ink outline-none placeholder:text-ink-faint font-mono min-w-0"
-                  />
-                  {validAddress && <CheckCircleIcon className="w-4 h-4 text-success-accent shrink-0" />}
-                  {form.address.length > 0 && !validAddress && <ExclamationTriangleIcon className="w-4 h-4 text-warning-accent shrink-0" />}
-                </div>
-                {errors.address
-                  ? <p className="text-xs text-danger mt-1.5">{errors.address}</p>
-                  : form.address.length > 0 && !validAddress
-                    ? <p className="text-xs text-warning mt-1.5">Address looks too short — please verify it</p>
-                    : <p className="text-xs text-ink-faint mt-1.5">Paste the full wallet address of the recipient</p>
-                }
-              </div>
+              <FormInput
+                label="Recipient Wallet Address"
+                name="address"
+                value={form.address}
+                onChange={setField}
+                error={errors.address ?? (form.address.length > 0 && !validAddress ? 'Address looks too short — please verify it' : undefined)}
+                placeholder="0x... or blockchain wallet address"
+                helper="Paste the full wallet address of the recipient"
+                required
+              />
 
               {/* Network selector */}
               <div>
@@ -222,7 +199,7 @@ export default function TransactionsPage() {
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: 'auto' }}
                     exit={{ opacity: 0, height: 0 }}
-                    transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
+                    transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] }}
                     className="overflow-hidden"
                   >
                     <div className="rounded-xl border border-line bg-surface p-4">

@@ -27,16 +27,26 @@ export interface KYBItem {
   urgency: 'High' | 'Medium' | 'Low'
 }
 
+export interface Wallet {
+  id: string
+  label: string
+  address: string
+  addressShort: string
+  network: string
+  balance: string
+  status: 'active' | 'inactive'
+  lastUsed: string
+}
+
 export const navItems = [
   { id: 'dashboard', label: 'Dashboard', icon: 'dashboard' },
   { id: 'exporters', label: 'Exporters', icon: 'exporters' },
   { id: 'transactions', label: 'Transactions', icon: 'transactions' },
-  { id: 'kyb', label: 'KYB Reviews', icon: 'kyb' },
-  { id: 'wallets', label: 'Wallets', icon: 'wallets' },
+{ id: 'wallets', label: 'Wallets', icon: 'wallets' },
   { id: 'settings', label: 'Settings', icon: 'settings' },
 ]
 
-export const statCards = [
+export const statCards: Array<{ id: string; title: string; value: string; trend: string; trendDirection: 'up' | 'down'; icon: 'currency' | 'users' | 'shield' }> = [
   {
     id: 'volume',
     title: 'Total Transaction Volume',
@@ -63,7 +73,7 @@ export const statCards = [
   },
 ]
 
-export const transactions = [
+export const transactions: Transaction[] = [
   {
     id: 'TXN-8821',
     company: 'Meridian Exports Ltd',
@@ -151,7 +161,60 @@ export const topExporters = [
   { id: 5, company: 'Andean Trade Partners',   country: 'Chile',      transactions: 14, volume: '$203K', volumeRaw: 203000 },
 ]
 
-export const kybQueue = [
+export const wallets: Wallet[] = [
+  {
+    id: 'WLT-001',
+    label: 'Primary Treasury',
+    address: '0x4F3cA8B12d6E2Cc1F7094bB3E5A9c2d01ef7e9A1',
+    addressShort: '0x4F3c...e9A1',
+    network: 'ethereum',
+    balance: '$124,800.00',
+    status: 'active',
+    lastUsed: 'May 07, 2026',
+  },
+  {
+    id: 'WLT-002',
+    label: 'Operations Wallet',
+    address: '0xA91dB4C3e82F17a09D5c64E3Fb2891A00cd43Fc2',
+    addressShort: '0xA91d...3Fc2',
+    network: 'polygon',
+    balance: '$38,450.00',
+    status: 'active',
+    lastUsed: 'May 06, 2026',
+  },
+  {
+    id: 'WLT-003',
+    label: 'Payroll Reserve',
+    address: '0x7bE1F2C94A3d8B056e1Dc7F3a9200B4E6cf70DA4',
+    addressShort: '0x7bE1...0DA4',
+    network: 'bnb',
+    balance: '$62,100.00',
+    status: 'active',
+    lastUsed: 'May 06, 2026',
+  },
+  {
+    id: 'WLT-004',
+    label: 'Liquidity Pool',
+    address: '0x9eF0C2B1d5A84E37f0c9D682Ba4310F7e2b87Ac3',
+    addressShort: '0x9eF0...7Ac3',
+    network: 'solana',
+    balance: '$15,920.00',
+    status: 'active',
+    lastUsed: 'May 05, 2026',
+  },
+  {
+    id: 'WLT-005',
+    label: 'Cold Storage',
+    address: '0x2cD8E1A4b9F37C20d6B891Ec4A35f7D002a4F5b9',
+    addressShort: '0x2cD8...F5b9',
+    network: 'ethereum',
+    balance: '$510,000.00',
+    status: 'inactive',
+    lastUsed: 'Mar 12, 2026',
+  },
+]
+
+export const kybQueue: KYBItem[] = [
   { id: 1, company: 'Horizon Logistics Pte',   submitted: 'Apr 28, 2026', daysPending: 10, urgency: 'High'   },
   { id: 2, company: 'Atlas Cargo Solutions',   submitted: 'May 1, 2026',  daysPending: 7,  urgency: 'High'   },
   { id: 3, company: 'Coastal Minerals Corp',   submitted: 'May 3, 2026',  daysPending: 5,  urgency: 'Medium' },

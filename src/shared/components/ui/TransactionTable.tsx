@@ -9,7 +9,7 @@ const tableVariants = {
   show: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1], delay: 0.28 },
+    transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] as [number, number, number, number], delay: 0.28 },
   },
 }
 
@@ -18,7 +18,7 @@ const rowVariants = {
   show: (i: number) => ({
     opacity: 1,
     x: 0,
-    transition: { duration: 0.3, ease: 'easeOut', delay: 0.38 + i * 0.04 },
+    transition: { duration: 0.3, ease: 'easeOut' as const, delay: 0.38 + i * 0.04 },
   }),
 }
 
@@ -113,9 +113,9 @@ export default function TransactionTable({ transactions }: { transactions: Trans
                     <button
                       type="button"
                       onClick={() => handleReview(tx)}
-                      className={`text-xs transition-colors ${ACTION_STYLES[tx.status] ?? ACTION_STYLES.completed}`}
+                      className={`text-xs transition-colors ${ACTION_STYLES[tx.status as keyof typeof ACTION_STYLES] ?? ACTION_STYLES.completed}`}
                     >
-                      {ACTION_LABELS[tx.status] ?? 'View'}
+                      {ACTION_LABELS[tx.status as keyof typeof ACTION_LABELS] ?? 'View'}
                     </button>
                   </td>
                 </motion.tr>

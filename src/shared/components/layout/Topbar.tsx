@@ -19,7 +19,7 @@ interface TopbarProps {
 export default function Topbar({ setSidebarOpen, isDark, toggleDark }: TopbarProps) {
   const { pathname } = useLocation()
   const pageKey = pathname.replace(/^\//, '') || 'dashboard'
-  const { title, subtitle } = PAGE_META[pageKey] ?? PAGE_META.dashboard
+  const { title, subtitle } = PAGE_META[pageKey as keyof typeof PAGE_META] ?? PAGE_META.dashboard
 
   return (
     <header className="h-16 bg-card border-b border-line flex items-center justify-between px-4 lg:px-8 shrink-0 gap-4">

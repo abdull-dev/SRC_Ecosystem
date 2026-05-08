@@ -1,19 +1,15 @@
-import { useState, useEffect, useCallback } from 'react'
-import { createPortal } from 'react-dom'
+import { useState, useCallback } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { toast } from 'sonner'
 import {
-  XMarkIcon, CheckCircleIcon, ExclamationTriangleIcon,
+  CheckCircleIcon, ExclamationTriangleIcon,
 } from '../../../shared/components/icons'
 import Spinner from '../../../shared/components/ui/Spinner'
 import { CopyButton, DetailRow } from '../../../shared/components/ui/ModalParts'
+import ModalShell from '../../../shared/components/ui/ModalShell'
+import { NETWORKS } from '../../../shared/data/networksConfig'
 
-const NETWORK_META = {
-  ethereum: { label: 'Ethereum',   symbol: 'ETH',   color: '#627EEA' },
-  polygon:  { label: 'Polygon',    symbol: 'MATIC', color: '#8247E5' },
-  bnb:      { label: 'BNB Chain',  symbol: 'BNB',   color: '#F3BA2F' },
-  solana:   { label: 'Solana',     symbol: 'SOL',   color: '#9945FF' },
-}
+const NETWORK_META = Object.fromEntries(NETWORKS.map(n => [n.id, n]))
 
 interface PaymentData {
   amount: string
@@ -237,65 +233,22 @@ export default function SendPaymentModal({ isOpen, onClose, onSuccess, paymentDa
     handleClose()
   }
 
-  useEffect(() => {
-    document.body.style.overflow = isOpen ? 'hidden' : ''
-    return () => { document.body.style.overflow = '' }
-  }, [isOpen])
-
-  useEffect(() => {
-    if (!isOpen) return
-    const onKey = (e) => { if (e.key === 'Escape' && status === 'review') handleClose() }
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [isOpen, status, handleClose])
-
   if (!paymentData) return null
 
-  return createPortal(
-    <AnimatePresence>
-      {isOpen && (
-        <motion.div
-          key="backdrop"
-          initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-          transition={{ duration: 0.2 }}
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
-          onClick={(e) => { if (e.target === e.currentTarget && status === 'review') handleClose() }}
-        >
-          <motion.div
-            key="card"
-            initial={{ opacity: 0, scale: 0.96, y: 8 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.96, y: 8 }}
-            transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-            className="w-full max-w-md bg-card rounded-2xl border border-line/80 shadow-2xl overflow-hidden"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Header — only on review state */}
-            {status === 'review' && (
-              <div className="px-6 py-4 border-b border-line flex items-start justify-between gap-4">
-                <div>
-                  <h2 className="text-base font-semibold text-ink">Confirm Payment</h2>
-                  <p className="text-xs text-ink-muted mt-0.5">Review all details carefully before confirming.</p>
-                </div>
-                <button type="button" onClick={handleClose} className="p-1.5 rounded-lg text-ink-faint hover:text-ink hover:bg-surface transition-colors shrink-0 mt-0.5" aria-label="Close">
-                  <XMarkIcon className="w-4 h-4" />
-                </button>
-              </div>
-            )}
-
-            {/* Body */}
-            <div className="px-6 py-5 max-h-[85vh] overflow-y-auto">
-              <AnimatePresence mode="wait">
-                {status === 'review'  && <ReviewView  data={paymentData} onConfirm={handleConfirm} onCancel={handleCancel} />}
-                {status === 'pending' && <PendingView data={paymentData} />}
-                {status === 'success' && <SuccessView data={paymentData} txHash={txHash} onDone={handleDone} />}
-                {status === 'failed'  && <FailedView  onRetry={() => setStatus('review')} onClose={handleClose} />}
-              </AnimatePresence>
-            </div>
-          </motion.div>
-        </motion.div>
-      )}
-    </AnimatePresence>,
-    document.body
+  return (
+    <ModalShell
+      isOpen={isOpen}
+      onClose={handleClose}
+      canClose={status === 'review'}
+      title={status === 'review' ? 'Confirm Payment' : undefined}
+      subtitle={status === 'review' ? 'Review all details carefully before confirming.' : undefined}
+    >
+      <AnimatePresence mode="wait">
+        {status === 'review'  && <ReviewView  data={paymentData} onConfirm={handleConfirm} onCancel={handleCancel} />}
+        {status === 'pending' && <PendingView data={paymentData} />}
+        {status === 'success' && <SuccessView data={paymentData} txHash={txHash} onDone={handleDone} />}
+        {status === 'failed'  && <FailedView  onRetry={() => setStatus('review')} onClose={handleClose} />}
+      </AnimatePresence>
+    </ModalShell>
   )
 }

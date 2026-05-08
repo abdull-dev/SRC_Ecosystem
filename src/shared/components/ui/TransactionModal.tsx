@@ -1,13 +1,13 @@
-import { useState, useEffect, useCallback } from 'react'
-import { createPortal } from 'react-dom'
+import { useState, useCallback } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { toast } from 'sonner'
 import {
-  XMarkIcon, CheckCircleIcon,
+  CheckCircleIcon,
   ExclamationTriangleIcon, InformationCircleIcon,
 } from '../icons'
 import Spinner from './Spinner'
 import { CopyButton, DetailRow } from './ModalParts'
+import ModalShell from './ModalShell'
 import type { Transaction } from '../../data/mockData'
 
 const NETWORK_LABELS = {
@@ -95,7 +95,7 @@ function ReviewView({ tx, onConfirm, onCancel }: { tx: Transaction; onConfirm: (
       <div>
         <p className="text-xs font-semibold text-ink-faint uppercase tracking-wider mb-2">Destination Wallet</p>
         <SectionCard>
-          <DetailRow label="Network" value={NETWORK_LABELS[tx.network] ?? tx.network} />
+          <DetailRow label="Network" value={NETWORK_LABELS[tx.network as keyof typeof NETWORK_LABELS] ?? tx.network} />
           <div className="py-2.5 border-b border-line-subtle">
             <div className="flex items-start justify-between gap-3 text-sm">
               <span className="text-ink-muted shrink-0">Address</span>
@@ -203,7 +203,7 @@ function SuccessView({ tx, onClose }: { tx: Transaction; onClose: () => void }) 
       <div className="w-full bg-surface/60 rounded-xl p-4 text-left space-y-0">
         <DetailRow label="Reference" value={tx.id} mono />
         <DetailRow label="Amount"    value={tx.amount} />
-        <DetailRow label="Network"   value={NETWORK_LABELS[tx.network] ?? tx.network} />
+        <DetailRow label="Network"   value={NETWORK_LABELS[tx.network as keyof typeof NETWORK_LABELS] ?? tx.network} />
       </div>
       <button
         type="button"
@@ -282,26 +282,6 @@ export default function TransactionModal({ isOpen, onClose, transaction }: { isO
     }, 2000)
   }
 
-  // Scroll lock
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = 'hidden'
-    } else {
-      document.body.style.overflow = ''
-    }
-    return () => { document.body.style.overflow = '' }
-  }, [isOpen])
-
-  // ESC to close
-  useEffect(() => {
-    if (!isOpen) return
-    const onKey = (e) => {
-      if (e.key === 'Escape' && modalStatus === 'review') handleClose()
-    }
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
-  }, [isOpen, modalStatus, handleClose])
-
   if (!transaction) return null
 
   const isReadOnly = transaction.status === 'completed'
@@ -310,73 +290,24 @@ export default function TransactionModal({ isOpen, onClose, transaction }: { isO
     ? 'This transaction has been processed.'
     : 'Review the details before confirming this payment.'
 
-  return createPortal(
-    <AnimatePresence>
-      {isOpen && (
-        <motion.div
-          key="backdrop"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.2 }}
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
-          onClick={(e) => {
-            if (e.target === e.currentTarget && modalStatus === 'review') handleClose()
-          }}
-        >
-          <motion.div
-            key="card"
-            initial={{ opacity: 0, scale: 0.96, y: 8 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.96, y: 8 }}
-            transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-            className="w-full max-w-md bg-card rounded-2xl border border-line/80 shadow-2xl overflow-hidden"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Modal header */}
-            {modalStatus === 'review' && (
-              <div className="px-6 py-4 border-b border-line flex items-start justify-between gap-4">
-                <div>
-                  <h2 className="text-base font-semibold text-ink">{headerTitle}</h2>
-                  <p className="text-xs text-ink-muted mt-0.5">{headerSubtitle}</p>
-                </div>
-                <button
-                  type="button"
-                  onClick={handleClose}
-                  className="p-1.5 rounded-lg text-ink-faint hover:text-ink hover:bg-surface transition-colors shrink-0 mt-0.5"
-                  aria-label="Close modal"
-                >
-                  <XMarkIcon className="w-4 h-4" />
-                </button>
-              </div>
-            )}
-
-            {/* Modal body */}
-            <div className="px-6 py-5 max-h-[80vh] overflow-y-auto">
-              <AnimatePresence mode="wait">
-                {modalStatus === 'review' && (
-                  <ReviewView
-                    tx={transaction}
-                    onConfirm={handleConfirm}
-                    onCancel={handleCancel}
-                  />
-                )}
-                {modalStatus === 'pending' && <PendingView tx={transaction} />}
-                {modalStatus === 'success' && (
-                  <SuccessView tx={transaction} onClose={handleClose} />
-                )}
-                {modalStatus === 'failed' && (
-                  <FailedView
-                    onRetry={() => setModalStatus('review')}
-                    onClose={handleClose}
-                  />
-                )}
-              </AnimatePresence>
-            </div>
-          </motion.div>
-        </motion.div>
-      )}
-    </AnimatePresence>,
-    document.body
+  return (
+    <ModalShell
+      isOpen={isOpen}
+      onClose={handleClose}
+      canClose={modalStatus === 'review'}
+      title={modalStatus === 'review' ? headerTitle : undefined}
+      subtitle={modalStatus === 'review' ? headerSubtitle : undefined}
+    >
+      <AnimatePresence mode="wait">
+        {modalStatus === 'review' && (
+          <ReviewView tx={transaction} onConfirm={handleConfirm} onCancel={handleCancel} />
+        )}
+        {modalStatus === 'pending' && <PendingView tx={transaction} />}
+        {modalStatus === 'success' && <SuccessView tx={transaction} onClose={handleClose} />}
+        {modalStatus === 'failed' && (
+          <FailedView onRetry={() => setModalStatus('review')} onClose={handleClose} />
+        )}
+      </AnimatePresence>
+    </ModalShell>
   )
 }

@@ -6,7 +6,6 @@ import {
   DashboardIcon,
   ExportersIcon,
   TransactionsIcon,
-  ShieldCheckIcon,
   WalletsIcon,
   SettingsIcon,
   DotsCircleIcon,
@@ -19,14 +18,13 @@ const navContainerVariants = {
 
 const navItemVariants = {
   hidden: { opacity: 0, x: -12 },
-  show: { opacity: 1, x: 0, transition: { duration: 0.28, ease: [0.22, 1, 0.36, 1] } },
+  show: { opacity: 1, x: 0, transition: { duration: 0.28, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] } },
 }
 
 const navIconMap = {
   dashboard:    DashboardIcon,
   exporters:    ExportersIcon,
   transactions: TransactionsIcon,
-  kyb:          ShieldCheckIcon,
   wallets:      WalletsIcon,
   settings:     SettingsIcon,
 }
@@ -52,7 +50,7 @@ function SidebarContent({ onClose }: { onClose: () => void }) {
         className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto"
       >
         {navItems.map(item => {
-          const Icon = navIconMap[item.id]
+          const Icon = navIconMap[item.id as keyof typeof navIconMap]
           return (
             <motion.div key={item.id} variants={navItemVariants}>
               <NavLink
@@ -68,11 +66,6 @@ function SidebarContent({ onClose }: { onClose: () => void }) {
               >
                 <Icon className="w-5 h-5 shrink-0" />
                 {item.label}
-                {item.id === 'kyb' && (
-                  <span className="ml-auto bg-warning-accent text-white text-xs font-semibold rounded-full px-1.5 py-0.5 leading-none">
-                    17
-                  </span>
-                )}
               </NavLink>
             </motion.div>
           )

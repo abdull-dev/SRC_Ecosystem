@@ -5,7 +5,7 @@ import { COINS, fetchCryptoPrices } from '../api/marketRates'
 
 const cardVariants = {
   hidden: { opacity: 0, y: 20 },
-  show:   { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1], delay: 0.3 } },
+  show:   { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1] as [number, number, number, number], delay: 0.3 } },
 }
 
 // ── Sub-components ────────────────────────────────────────────────────────────
@@ -130,7 +130,7 @@ export default function MarketRatesWidget() {
         <EmptyState />
       ) : (
         <div>
-          {data.map((coin, i) => (
+          {data!.map((coin, i) => (
             <CryptoRateRow key={coin.id} coin={coin} index={i} />
           ))}
         </div>

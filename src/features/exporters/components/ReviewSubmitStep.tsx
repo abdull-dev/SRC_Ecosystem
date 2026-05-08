@@ -80,7 +80,7 @@ export default function ReviewSubmitStep({ formData, onGoToStep }: { formData: R
               <span className="text-ink-muted">{label}</span>
               <div className="flex items-center gap-1.5 min-w-0">
                 <span className="text-ink font-medium truncate max-w-[180px]">
-                  {formData[key]?.name}
+                  {(formData as unknown as Record<string, File | null>)[key]?.name}
                 </span>
                 <CheckCircleIcon className="w-4 h-4 text-success-accent shrink-0" />
               </div>
@@ -90,7 +90,7 @@ export default function ReviewSubmitStep({ formData, onGoToStep }: { formData: R
       </SummarySection>
 
       <SummarySection title="Wallet Connection" onEdit={() => onGoToStep(3)}>
-        <InfoRow label="Network" value={NETWORK_LABELS[formData.network]} />
+        <InfoRow label="Network" value={NETWORK_LABELS[formData.network as keyof typeof NETWORK_LABELS]} />
         <InfoRow
           label="Wallet Address"
           value={

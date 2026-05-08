@@ -6,7 +6,7 @@ export default function KYBPage() {
     <motion.div
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] }}
       className="flex flex-col items-center justify-center min-h-[60vh] gap-5 text-center"
     >
       <div className="w-14 h-14 rounded-2xl bg-brand-subtle flex items-center justify-center">

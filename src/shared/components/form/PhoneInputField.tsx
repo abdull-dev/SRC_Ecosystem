@@ -1,4 +1,4 @@
-import PhoneInput from 'react-phone-number-input'
+import PhoneInput, { type Country } from 'react-phone-number-input'
 import 'react-phone-number-input/style.css'
 import { ExclamationTriangleIcon } from '../icons'
 import Tooltip from './Tooltip'
@@ -32,7 +32,7 @@ export default function PhoneInputField({
       <div className={`phone-field${error ? ' phone-field--error' : ''}`}>
         <PhoneInput
           international
-          defaultCountry={defaultCountry}
+          defaultCountry={defaultCountry as Country}
           value={value}
           onChange={val => onChange(name, val ?? '')}
           placeholder="Enter phone number"

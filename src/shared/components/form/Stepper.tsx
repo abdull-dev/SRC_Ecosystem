@@ -32,7 +32,7 @@ export default function Stepper({ steps, currentStep }: { steps: StepperStep[]; 
                     </svg>
                   ) : num}
                 </div>
-                <div className="hidden md:block min-w-0">
+                <div className="hidden xl:block min-w-0 max-w-[120px]">
                   <p className={`text-xs font-semibold leading-none transition-colors ${isActive ? 'text-brand' : isCompleted ? 'text-ink-2' : 'text-ink-faint'}`}>
                     {step.title}
                   </p>

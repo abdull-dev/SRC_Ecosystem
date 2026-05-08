@@ -5,7 +5,7 @@ const rowVariants = {
   hidden: { opacity: 0, x: -8 },
   show: (i: number) => ({
     opacity: 1, x: 0,
-    transition: { duration: 0.28, ease: 'easeOut', delay: 0.38 + i * 0.06 },
+    transition: { duration: 0.28, ease: 'easeOut' as const, delay: 0.38 + i * 0.06 },
   }),
 }
 
@@ -29,7 +29,7 @@ function formatPrice(price: number | null | undefined): string {
 
 export default function CryptoRateRow({ coin, index }: { coin: Coin; index: number }) {
   const { name, symbol, color, price, change24h } = coin
-  const isPositive = change24h >= 0
+  const isPositive = (change24h ?? 0) >= 0
   const changeAbs = Math.abs(change24h ?? 0).toFixed(2)
 
   return (

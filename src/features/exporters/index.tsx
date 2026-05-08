@@ -14,8 +14,8 @@ import Spinner from '../../shared/components/ui/Spinner'
 
 const stepVariants = {
   enter:  (dir: number) => ({ x: dir * 40, opacity: 0 }),
-  center: { x: 0, opacity: 1, transition: { duration: 0.3, ease: [0.22, 1, 0.36, 1] } },
-  exit:   (dir: number) => ({ x: dir * -40, opacity: 0, transition: { duration: 0.18, ease: 'easeIn' } }),
+  center: { x: 0, opacity: 1, transition: { duration: 0.3, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] } },
+  exit:   (dir: number) => ({ x: dir * -40, opacity: 0, transition: { duration: 0.18, ease: 'easeIn' as const } }),
 }
 
 export default function OnboardingPage() {
@@ -38,13 +38,13 @@ export default function OnboardingPage() {
   }
 
   const validate = (step: number) => {
-    const schema = STEP_SCHEMAS[step]
+    const schema = STEP_SCHEMAS[step as keyof typeof STEP_SCHEMAS]
     if (!schema) return {}
     const result = schema.safeParse(formData)
     const e = result.success
       ? {}
       : Object.fromEntries(
-          Object.entries(result.error.flatten().fieldErrors).map(([k, v]) => [k, v[0]])
+          Object.entries(result.error.flatten().fieldErrors).map(([k, v]) => [k, (v as string[])[0]])
         )
     if (step === 3 && !walletConnected) e.walletConnect = 'Please connect your wallet before continuing'
     return e
@@ -113,7 +113,7 @@ export default function OnboardingPage() {
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+        transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] as [number, number, number, number] }}
         className="max-w-xl mx-auto"
       >
         <div className="bg-card rounded-2xl border border-line/80 shadow-sm px-8 py-12 text-center">

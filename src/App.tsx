@@ -6,7 +6,6 @@ import Topbar from './shared/components/layout/Topbar'
 import DashboardPage    from './features/dashboard'
 import ExportersPage    from './features/exporters'
 import TransactionsPage from './features/transactions'
-import KYBPage          from './features/kyb'
 import WalletsPage      from './features/wallets'
 import SettingsPage     from './features/settings'
 import './App.css'
@@ -56,7 +55,6 @@ export default function App() {
         <Route path="dashboard"       element={<DashboardPage />} />
         <Route path="exporters"       element={<ExportersPage />} />
         <Route path="transactions"    element={<TransactionsPage />} />
-        <Route path="kyb"             element={<KYBPage />} />
         <Route path="wallets"         element={<WalletsPage />} />
         <Route path="settings"        element={<SettingsPage />} />
         <Route path="*"               element={<Navigate to="/dashboard" replace />} />

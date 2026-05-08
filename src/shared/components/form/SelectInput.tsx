@@ -44,8 +44,8 @@ export default function SelectInput({
         >
           <option value="" disabled>{placeholder}</option>
           {options.map(opt => {
-            const val = opt.value ?? opt
-            const lbl = opt.label ?? opt
+            const val = typeof opt === 'string' ? opt : opt.value
+            const lbl = typeof opt === 'string' ? opt : opt.label
             return <option key={val} value={val}>{lbl}</option>
           })}
         </select>
