@@ -1,0 +1,178 @@
+@import "tailwindcss";
+
+@theme {
+  /* ─── Typography ────────────────────────────────────────────────────────────
+     Inter variable font — covers weights 100–900, optical sizes 14–32.
+     Tailwind v4 reads --font-sans to generate the font-sans utility. */
+  --font-sans: 'Inter', system-ui, sans-serif;
+
+  /* ─── Brand: Deep Cyan ─────────────────────────────────────────────────────
+     Chosen for SRC Ecosystem: sits at the crossroads of blockchain network
+     maps, open-ocean trade routes, and digital finance precision.
+     NOT indigo (generic SaaS) — cyan reads as technical, global, and premium. */
+  --color-brand:        #0891b2;   /* cyan-600  — primary actions, active states */
+  --color-brand-dark:   #0e7490;   /* cyan-700  — hover, pressed */
+  --color-brand-subtle: #cffafe;   /* cyan-100  — icon bg, soft highlights */
+
+  /* ─── Sidebar ───────────────────────────────────────────────────────────────
+     Deep maritime navy — darker than the canvas, creates strong visual anchor */
+  --color-sidebar:      #0a1628;
+
+  /* ─── Surfaces ──────────────────────────────────────────────────────────────
+     Slightly cool-tinted whites — avoid the sterile pure-white feel */
+  --color-canvas:       #f4f8fb;   /* page background — cool near-white      */
+  --color-card:         #ffffff;   /* card surface                            */
+  --color-surface:      #e8f4f9;   /* chip bg, table header — light cyan wash */
+
+  /* ─── Text ──────────────────────────────────────────────────────────────────
+     Navy-shifted ink instead of pure black — pairs with the cyan brand */
+  --color-ink:          #0c1a2e;   /* primary text — rich dark navy           */
+  --color-ink-2:        #374151;   /* secondary text                          */
+  --color-ink-muted:    #6b7280;   /* labels, subtitles                       */
+  --color-ink-faint:    #9ca3af;   /* placeholders, inactive nav              */
+
+  /* ─── Borders ───────────────────────────────────────────────────────────────
+     Cool-tinted borders that feel at home with the cyan brand */
+  --color-line:         #d6e4ed;   /* standard border — cool gray-blue        */
+  --color-line-subtle:  #eaf2f8;   /* dividers — barely-there                 */
+
+  /* ─── Status: Success ───────────────────────────────────────────────────────  */
+  --color-success:        #047857;
+  --color-success-accent: #10b981;
+  --color-success-subtle: #ecfdf5;
+  --color-success-border: #a7f3d0;
+
+  /* ─── Status: Warning ───────────────────────────────────────────────────────  */
+  --color-warning:        #b45309;
+  --color-warning-accent: #f59e0b;
+  --color-warning-subtle: #fffbeb;
+  --color-warning-border: #fde68a;
+
+  /* ─── Status: Danger ────────────────────────────────────────────────────────  */
+  --color-danger:        #dc2626;
+  --color-danger-accent: #ef4444;
+  --color-danger-subtle: #fef2f2;
+  --color-danger-border: #fecaca;
+}
+
+/* ─── Dark Mode ────────────────────────────────────────────────────────────────
+   Full navy-spectrum dark theme — not generic dark gray.
+   Depth hierarchy: sidebar (#060e1e) → canvas (#0d1829) → card (#112236) → surface (#1a2e48)
+   Brand shifts from cyan-600 to cyan-400 for better contrast on navy. */
+.dark {
+  --color-brand:        #22d3ee;   /* cyan-400  — pops on navy background     */
+  --color-brand-dark:   #06b6d4;   /* cyan-500                                */
+  --color-brand-subtle: #083344;   /* deep dark cyan                          */
+
+  --color-sidebar:      #060e1e;   /* deepest point — visual anchor           */
+
+  --color-canvas:       #0d1829;   /* dark navy page background               */
+  --color-card:         #112236;   /* card — one step lighter                 */
+  --color-surface:      #1a2e48;   /* chip bg, table header                   */
+
+  --color-ink:          #deeaf7;   /* cool near-white — blue-tinted for navy  */
+  --color-ink-2:        #a3bdd4;   /* secondary — muted blue-white            */
+  --color-ink-muted:    #7a9ab5;   /* labels on dark navy                     */
+  --color-ink-faint:    #4f6d85;   /* placeholders, inactive nav              */
+
+  --color-line:         #1e3a55;   /* visible border on navy card             */
+  --color-line-subtle:  #1a2e48;   /* subtle divider — matches surface        */
+
+  --color-success:        #34d399;
+  --color-success-accent: #10b981;
+  --color-success-subtle: #022c22;
+  --color-success-border: #065f46;
+
+  --color-warning:        #fbbf24;
+  --color-warning-accent: #f59e0b;
+  --color-warning-subtle: #431407;
+  --color-warning-border: #78350f;
+
+  --color-danger:        #f87171;
+  --color-danger-accent: #ef4444;
+  --color-danger-subtle: #3b0a0a;
+  --color-danger-border: #7f1d1d;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  transition-property: color, background-color, border-color, fill, stroke, outline-color;
+  transition-duration: 150ms;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-feature-settings: 'cv01', 'cv02', 'ss01'; /* Inter humanist alternates */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Tabular-nums helper — use on stat values, amounts, and table numbers */
+.font-tabular {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum';
+}
+
+#root {
+  width: 100%;
+  min-height: 100svh;
+  display: block;
+  text-align: left;
+}
+
+/* ─── Phone Input Field ─────────────────────────────────────────────────────── */
+.phone-field .PhoneInput {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--color-card);
+  border: 1px solid var(--color-line);
+  border-radius: 0.5rem;
+  padding: 0 1rem;
+  transition: border-color 150ms, box-shadow 150ms;
+}
+.phone-field .PhoneInput--focus {
+  border-color: color-mix(in srgb, var(--color-brand) 50%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-brand) 25%, transparent);
+}
+.phone-field--error .PhoneInput {
+  border-color: color-mix(in srgb, var(--color-danger) 50%, transparent);
+}
+.phone-field--error .PhoneInput--focus {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-danger) 20%, transparent);
+}
+.phone-field .PhoneInputInput {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  padding: 0.625rem 0;
+  font-size: 0.875rem;
+  color: var(--color-ink);
+  font-family: inherit;
+}
+.phone-field .PhoneInputInput::placeholder {
+  color: var(--color-ink-faint);
+}
+.phone-field .PhoneInputCountrySelect {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--color-ink);
+  outline: none;
+  font-size: 0.875rem;
+  font-family: inherit;
+}
+.phone-field .PhoneInputCountrySelectArrow {
+  color: var(--color-ink-faint);
+  margin-left: 0.25rem;
+}
+.phone-field .PhoneInputCountryIcon {
+  box-shadow: none;
+  border-radius: 2px;
+  overflow: hidden;
+}
